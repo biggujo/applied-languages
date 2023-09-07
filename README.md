@@ -1,5 +1,13 @@
-# Repository info
+# 01-rock-paper-scissors
 
-This repository contains homeworks on Applied Programming university course.
+## Task
 
-Each branch has the task in README.md and the solution.
+Make a small script game "rock paper scissors".
+We pass the subject as a command line argument to the input.
+The output is the result.
+
+Ex:
+```
+input --> ruby game.rb Stone Paper
+output --> You lose
+```
