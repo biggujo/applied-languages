@@ -1,12 +1,16 @@
 NEEDED_ARGUMENTS_AMOUNT = 2
 
-POSSIBLE_ARGUMENTS = %w[rock paper scissors]
+VARIANTS = {
+  :rock => "rock",
+  :paper => "paper",
+  :scissors => "scissors",
+}
 
 # @param possible_values is a string array
 # @return true if every arg in ARGV exists in possible_values
-def does_argv_have_needed_values possible_values
+def does_argv_have_needed_values(possible_values)
   ARGV.each do |arg|
-    if !possible_values.include?(arg.downcase)
+    unless possible_values.include?(arg.downcase)
       return false
     end
   end
@@ -14,8 +18,31 @@ def does_argv_have_needed_values possible_values
   true
 end
 
-def is_argv_of_needed_length length
+# @return true if length is met
+def is_argv_of_needed_length(length)
   ARGV.length == length
+end
+
+# An example of the impure function
+# @return result of the game as a string
+def get_game_results(player_variant, opponent_variant)
+  if player_variant == opponent_variant
+    return "Draw"
+  end
+
+  if player_variant == VARIANTS[:rock] && opponent_variant == VARIANTS[:scissors] ||
+    player_variant == VARIANTS[:scissors] && opponent_variant == VARIANTS[:paper] ||
+    player_variant == VARIANTS[:paper] && opponent_variant == VARIANTS[:rock]
+    return "You won"
+  end
+
+  if player_variant == VARIANTS[:scissors] && opponent_variant == VARIANTS[:rock] ||
+    player_variant == VARIANTS[:paper] && opponent_variant == VARIANTS[:scissors] ||
+    player_variant == VARIANTS[:rock] && opponent_variant == VARIANTS[:paper]
+    return "You lose"
+  end
+
+  "Undefined result"
 end
 
 puts ">> Rock Paper Scissors << "
@@ -32,6 +59,15 @@ unless is_argv_of_needed_length NEEDED_ARGUMENTS_AMOUNT
   return
 end
 
-unless does_argv_have_needed_values POSSIBLE_ARGUMENTS
-  puts "You must provide two of the following arguments: #{POSSIBLE_ARGUMENTS.join ","}"
+unless does_argv_have_needed_values VARIANTS.values
+  puts "You must provide two of the following arguments:"
+  puts "#{VARIANTS.values.join ", "}"
+  return
 end
+
+player_variant = ARGV[0]
+opponent_variant = ARGV[1]
+
+puts "Yours variant: #{player_variant}"
+puts "Opponent variant: #{opponent_variant}"
+puts "Result: #{get_game_results player_variant, opponent_variant}"
