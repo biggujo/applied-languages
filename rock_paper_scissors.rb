@@ -6,6 +6,12 @@ VARIANTS = {
   :scissors => "scissors",
 }
 
+WIN_CONDITIONS = {
+  VARIANTS[:rock] => VARIANTS[:scissors],
+  VARIANTS[:scissors] => VARIANTS[:paper],
+  VARIANTS[:paper] => VARIANTS[:rock],
+}
+
 # @param possible_values is a string array
 # @return true if every arg in ARGV exists in possible_values
 def does_argv_have_needed_values(possible_values)
@@ -30,15 +36,11 @@ def get_game_results(player_variant, opponent_variant)
     return "Draw"
   end
 
-  if player_variant == VARIANTS[:rock] && opponent_variant == VARIANTS[:scissors] ||
-    player_variant == VARIANTS[:scissors] && opponent_variant == VARIANTS[:paper] ||
-    player_variant == VARIANTS[:paper] && opponent_variant == VARIANTS[:rock]
+  if WIN_CONDITIONS[player_variant] == opponent_variant
     return "You won"
   end
 
-  if player_variant == VARIANTS[:scissors] && opponent_variant == VARIANTS[:rock] ||
-    player_variant == VARIANTS[:paper] && opponent_variant == VARIANTS[:scissors] ||
-    player_variant == VARIANTS[:rock] && opponent_variant == VARIANTS[:paper]
+  if WIN_CONDITIONS[opponent_variant] == player_variant
     return "You lose"
   end
 
