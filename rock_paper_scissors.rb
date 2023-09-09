@@ -67,8 +67,8 @@ unless does_argv_have_needed_values VARIANTS.values
   return
 end
 
-player_variant = ARGV[0]
-opponent_variant = ARGV[1]
+player_variant = ARGV[0].downcase
+opponent_variant = ARGV[1].downcase
 
 puts "Yours variant: #{player_variant}"
 puts "Opponent variant: #{opponent_variant}"
