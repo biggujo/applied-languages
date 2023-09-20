@@ -47,7 +47,7 @@ ARGV.each do |entity|
   end
 
   if operator? entity
-    # Print higher or same order operators
+    # Print higher or the same order operators
     # and remove them from the temp array
     if operators.length > 1
       until operator_order[operators[-1]] < operator_order[entity] do
