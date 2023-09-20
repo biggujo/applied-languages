@@ -9,6 +9,6 @@ On the way out, we see him at RPN
 Ex.:
 
 ```
-input --> 2 + 1 × 4
-output --> 2 1 4 * +
+input --> ( 3 + 4 ) + ( 5 * 6 )
+output --> 3 4 + 5 6 * +
 ```
