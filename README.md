@@ -1,5 +1,5 @@
-# Repository info
+# 03-decorator
 
-This repository contains homeworks on Applied Programming university course.
+## Task
 
-Each branch has the task in README.md and the solution.
+Implement the decorator pattern.
