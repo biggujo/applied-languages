@@ -47,23 +47,23 @@ class AppendDecorator < Decorator
   end
 end
 
-# class ReverseDecorator < Decorator
-#   def initialize(processor)
-#     super(processor)
-#   end
-#
-#   def execute
-#     @processor.execute
-#     self
-#   end
-# end
+class ReverseDecorator < Decorator
+  def initialize(processor)
+    super(processor)
+  end
+
+  def execute
+    executed_processor = @processor.execute
+    executed_processor.value.reverse!
+    executed_processor
+  end
+end
 
 processor_original = ConcreteProcessor.new("someString")
-processor = AppendDecorator.new(processor_original, "12")
-processor = AppendDecorator.new(processor, "34")
-# processor = ReverseDecorator.new(processor)
+processor = AppendDecorator.new(processor_original, "12") # someString12
+processor = ReverseDecorator.new(processor) # 21gnirtSemos
+processor = AppendDecorator.new(processor, "34") # 21gnirtSemos34
 
 processor.execute
 
 puts processor_original.value
-# puts processor.processor.processor.processor.value
