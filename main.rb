@@ -15,7 +15,6 @@ class ConcreteProcessor < Processor
 
   def execute
     # Some possible processing by default
-    @value
     self
   end
 end
@@ -37,14 +36,14 @@ end
 # 4. Decorator classes do some actions
 class AppendDecorator < Decorator
   def initialize(decorator, text)
-    super(decorator.processor)
+    super(decorator)
     @text = text
   end
 
   def execute
     executed_processor = @processor.execute
     executed_processor.value += @text
-    self
+    executed_processor
   end
 end
 
@@ -59,11 +58,12 @@ end
 #   end
 # end
 
-processor = Decorator.new(ConcreteProcessor.new("someString"))
-processor = AppendDecorator.new(processor, "12")
+processor_original = ConcreteProcessor.new("someString")
+processor = AppendDecorator.new(processor_original, "12")
 processor = AppendDecorator.new(processor, "34")
 # processor = ReverseDecorator.new(processor)
 
 processor.execute
 
-puts processor.processor.value
+puts processor_original.value
+# puts processor.processor.processor.processor.value
