@@ -14,7 +14,7 @@ class ConcreteProcessor < Processor
   end
 
   def execute
-    # Some possible processing by default
+    # No possible processing by default as it is executed multiple times
     # @value = @value.split("").join(" ")
     self
   end
