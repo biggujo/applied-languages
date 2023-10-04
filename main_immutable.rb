@@ -58,9 +58,9 @@ class ReverseDecorator < Decorator
 end
 
 processor_original = ConcreteProcessor.new("someString")
-processor = AppendDecorator.new(processor_original, "12") # someString12
-processor = ReverseDecorator.new(processor) # 21gnirtSemos
-processor = AppendDecorator.new(processor, "34") # 21gnirtSemos34
+processor = AppendDecorator.new(processor_original, "12") # s o m e S t r i n g12
+processor = ReverseDecorator.new(processor) # 21g n i r t S e m o s
+processor = AppendDecorator.new(processor, "34") # 21g n i r t S e m o s34
 
 puts processor.execute.value
 puts processor_original.value
