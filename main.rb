@@ -11,7 +11,7 @@ end
 
 # Check whether a pie has equal rows (columns) or not
 def is_pie_a_rectangle(pie)
-  overall_pieces_amount = pie.join("").length
+  overall_pieces_amount = pie.join("").length.to_f
   row_pieces_amount = pie[0].length
   amount_of_rows = pie.length
 
@@ -25,5 +25,14 @@ pie = [
   "..o....",
 ]
 
-puts is_right_amount_of_raisins(pie)
-puts is_pie_a_rectangle(pie)
+unless is_right_amount_of_raisins(pie)
+  puts "There must be between #{MIN_RAISINS} and #{MAX_RAISINS} raisins"
+  exit 1
+end
+
+unless is_pie_a_rectangle(pie)
+  puts "The pie is not a rectangle"
+  exit 1
+end
+
+puts "Pie is correct"
