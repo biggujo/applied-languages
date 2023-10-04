@@ -29,14 +29,13 @@ class Decorator < Processor
 
   def execute
     @processor.execute
-    @processor
   end
 end
 
 # 4. Decorator classes do some actions
 class AppendDecorator < Decorator
-  def initialize(decorator, text)
-    super(decorator)
+  def initialize(processor, text)
+    super(processor)
     @text = text
   end
 
@@ -66,4 +65,5 @@ processor = AppendDecorator.new(processor, "34") # 21gnirtSemos34
 
 processor.execute
 
+puts processor.execute.value
 puts processor_original.value
