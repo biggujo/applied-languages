@@ -1,4 +1,5 @@
 require 'json'
+# require 'pry'
 require './06-module'
 
 x = { a: 1, b: 2 }
@@ -11,8 +12,14 @@ class Test
   def initialize(name)
     @name = name
   end
+
+  def test
+    puts "Lorem ipsum"
+    # binding.pry
+  end
 end
 
 test = Test.new("test")
 
 test.say_hello
+test.test
