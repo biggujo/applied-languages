@@ -60,7 +60,10 @@ end
 processor_original = ConcreteProcessor.new("someString")
 processor = AppendDecorator.new(processor_original, "12") # s o m e S t r i n g12
 processor = ReverseDecorator.new(processor) # 21g n i r t S e m o s
-processor = AppendDecorator.new(processor, "34") # 21g n i r t S e m o s34
+
+if ARGV.length > 0
+  processor = AppendDecorator.new(processor, "34") # 21g n i r t S e m o s34
+end
 
 puts processor.execute.value
 puts processor_original.value
