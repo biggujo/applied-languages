@@ -23,9 +23,22 @@ arabic_number = 0
 
 # Iterate through each provided digit
 roman_number.each_char do |digit|
+  unless roman_values.key?(digit)
+    puts "Wrong digit: #{digit}"
+    return
+  end
+
+  if roman_number.scan(digit).length > 3
+    puts "The roman digit repeats more than 3 times: #{digit}"
+    return
+  end
+
   # Get current value of a digit
   current_digit_value = roman_values[digit]
-  
+
+  # If next value is not bigger than the current one, just add it to result
+  # Otherwise, cancel the add of the previous sum and subtract the previous
+  # value once more before the add of the next one
   if current_digit_value <= previous_digit_value
     arabic_number += current_digit_value
   else
