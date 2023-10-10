@@ -20,14 +20,26 @@ def get_dividers(given_number)
   end
 end
 
-def pie_processor(given_pie, real_sizes, possible_dims, result)
-  (0..possible_dims.length - 1).each do |dimension_variant|
-    if given_pie.uniq.size <= 1
-      return false
-    end
+$all_variants = []
 
+def pie_processor(given_pie, real_sizes, possible_dims, results)
+  if possible_dims.length == 0
+    return false
+  end
+
+  if given_pie.uniq.size <= 1
+    return true
+  end
+
+  (0..possible_dims.length - 1).each do |dimension_variant|
+
+    # Horizontally first, works
     cut_width_dim = possible_dims[-dimension_variant - 1]
     cut_height_dim = possible_dims[dimension_variant]
+
+    # Vertically first
+    # cut_width_dim = possible_dims[dimension_variant]
+    # cut_height_dim = possible_dims[-dimension_variant - 1]
 
     if cut_width_dim > real_sizes[:width] or cut_height_dim > real_sizes[:height]
       next
@@ -35,19 +47,25 @@ def pie_processor(given_pie, real_sizes, possible_dims, result)
 
     (0..real_sizes[:height] - 1).each do |cur_row|
       (given_pie[cur_row].count("x")..real_sizes[:width] - 1).each do |cur_col|
-        pie, cut = get_pie_cut(given_pie, cur_row, cur_col, cut_width_dim, cut_height_dim)
+        pie, cut = get_pie_cut(given_pie.clone, cur_row, cur_col, cut_width_dim, cut_height_dim)
 
         unless cut != nil and cut.length > 0
           next
         end
 
-        result << cut
+        results << cut
 
         puts cut
 
-        if pie_processor(pie, real_sizes, possible_dims, result) == false
-          break
+        process_result = pie_processor(pie, real_sizes, possible_dims, results.clone)
+
+        if process_result == true
+          $all_variants << results
         end
+
+        results = []
+
+        break
       end
     end
   end
@@ -62,9 +80,15 @@ def get_pie_cut(pie, start_row, start_col, width, height)
         return nil;
       end
 
+      if pie[i][j] == "x"
+        return nil;
+      end
+
       cut += pie[i][j]
       pie[i][j] = "x"
     end
+
+    cut += "\n"
   end
 
   [pie, cut]
@@ -75,9 +99,9 @@ def change_array(array)
 end
 
 pie = [
-  "...o....",
-  "....o...",
   ".o......",
+  "......o.",
+  "....o...",
   "..o.....",
 ]
 
@@ -97,15 +121,14 @@ puts "Initial pie is correct"
 width = pie[0].length
 height = pie.length
 possible_dimensions = get_dividers(width * height / raisins)
-possible_result = []
 
 pie_processor(pie, {
   :width => width,
   :height => height
-}, possible_dimensions, possible_result)
+}, possible_dimensions, [])
 
 puts "Result"
-printf "%s", possible_result
+printf "%s", $all_variants
 
 # puts width
 # puts height
