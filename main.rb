@@ -1,38 +1,67 @@
-MIN_RAISINS = 1
-MAX_RAISINS = 10
-
-# Check if a pie has a few raisins,
-# but not too much and has any at all
-def is_right_amount_of_raisins(pie)
-  amount = pie.join("").count("o")
-
-  amount >= MIN_RAISINS and amount <= MAX_RAISINS
-end
+MIN_RAISINS = 2
+MAX_RAISINS = 9
 
 # Check whether a pie has equal rows (columns) or not
-def is_pie_a_rectangle(pie)
-  overall_pieces_amount = pie.join("").length.to_f
-  row_pieces_amount = pie[0].length
-  amount_of_rows = pie.length
+def is_pie_rectangular(pie)
+  ref_row_length = pie[0].length
 
-  overall_pieces_amount / row_pieces_amount == amount_of_rows
+  (1..pie.length - 1).each do |index|
+    if pie[index].length != ref_row_length
+      return false
+    end
+  end
+
+  true
+end
+
+def get_dividers(given_number)
+  (1..given_number).select do |number|
+    given_number % number == 0
+  end
+end
+
+def cut_the_pie(given_pie, real_sizes, possible_dimensions, result)
+  (0..possible_dimensions.length - 1).each do |dimension_variant|
+    cut_width_dimension = possible_dimensions[dimension_variant]
+    cut_height_dimension = possible_dimensions[-dimension_variant - 1]
+
+  end
+end
+
+def change_array(array)
+  array.delete(0)
 end
 
 pie = [
-  "...o...",
-  "....o..",
-  ".o.....",
-  "..o....",
+  "...o....",
+  "....o...",
+  ".o......",
+  "..o.....",
 ]
 
-unless is_right_amount_of_raisins(pie)
-  puts "There must be between #{MIN_RAISINS} and #{MAX_RAISINS} raisins"
-  exit 1
+raisins = pie.join("").count("o")
+
+unless raisins >= MIN_RAISINS and raisins <= MAX_RAISINS
+  raise "There must be between #{MIN_RAISINS} and #{MAX_RAISINS} raisins"
 end
 
-unless is_pie_a_rectangle(pie)
-  puts "The pie is not a rectangle"
-  exit 1
+unless is_pie_rectangular(pie)
+  raise "The pie must be rectangular"
 end
 
-puts "Pie is correct"
+puts "Initial pie is correct"
+
+# Get initial data
+width = pie[0].length
+height = pie.length
+possible_dimensions = get_dividers(width * height / raisins)
+possible_result = []
+
+cut_the_pie(pie, {
+  :width => width,
+  :height => height
+}, possible_dimensions, possible_result)
+
+# puts width
+# puts height
+# printf "%s", possible_dimensions
