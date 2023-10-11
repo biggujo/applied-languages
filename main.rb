@@ -66,22 +66,22 @@ def get_pie_cut(pie, start_row, start_col, width, height)
   [pie, cut]
 end
 
-def pie_processor(given_pie, real_sizes, possible_dims, res)
+def pie_processor(given_pie, res)
   if given_pie.uniq.size <= 1
     return true
   end
 
-  (0..possible_dims.length - 1).each do |dimension_variant|
+  (0...$possible_dims.length - 1).each do |dimension_variant|
 
     # Horizontally first
-    cut_width = possible_dims[-dimension_variant - 1]
-    cut_height = possible_dims[dimension_variant]
+    cut_width = $possible_dims[-dimension_variant - 1]
+    cut_height = $possible_dims[dimension_variant]
 
     # Vertically first (optional variant)
     # cut_width = possible_dims[dimension_variant]
     # cut_height = possible_dims[-dimension_variant - 1]
 
-    if cut_width > real_sizes[:width] or cut_height > real_sizes[:height]
+    if cut_width > $real_sizes[:width] or cut_height > $real_sizes[:height]
       next
     end
 
@@ -89,8 +89,8 @@ def pie_processor(given_pie, real_sizes, possible_dims, res)
     given_pie_clone = Marshal.load(Marshal.dump(given_pie))
     res_clone = Marshal.load(Marshal.dump(res))
 
-    (0..real_sizes[:height] - 1).each do |cur_row|
-      (given_pie_clone[cur_row].count("x")..real_sizes[:width] - 1).each do |cur_col|
+    (0..$real_sizes[:height] - 1).each do |cur_row|
+      (given_pie_clone[cur_row].count("x")..$real_sizes[:width] - 1).each do |cur_col|
         processed_pie, cut = get_pie_cut(given_pie_clone, cur_row, cur_col,
                                          cut_width, cut_height)
 
@@ -100,7 +100,7 @@ def pie_processor(given_pie, real_sizes, possible_dims, res)
 
         res_clone << cut
 
-        processor_result = pie_processor(processed_pie, real_sizes, possible_dims, res_clone)
+        processor_result = pie_processor(processed_pie, res_clone)
 
         is_new_answer_correct = (processor_result == true and
           res_clone.length == 4 and
@@ -144,19 +144,25 @@ end
 $all_variants = []
 
 # Get initial data
-width = pie[0].length
-height = pie.length
-possible_dimensions = get_dividers(width * height / raisins)
+$real_sizes = {
+  :width => pie[0].length,
+  :height => pie.length,
+  :area => pie[0].length * pie.length,
+}.freeze
 
-if possible_dimensions.length == 0
+$possible_dims = get_dividers($real_sizes[:area] / raisins).freeze
+
+if $possible_dims.empty?
   raise "Invalid pie size: no ways to cut the pie"
 end
 
 # Do backtracking
-pie_processor(pie, {
-  :width => width,
-  :height => height
-}, possible_dimensions, [])
+pie_processor(pie, [])
+
+if $all_variants.empty?
+  puts "No solutions"
+  return
+end
 
 # $all_variants.uniq!
 best_result = $all_variants.max_by { |variant| variant[0] }
