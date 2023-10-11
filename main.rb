@@ -17,7 +17,7 @@ def is_pie_rectangular(pie)
   ref_row_length = pie[0].length
 
   # Check if all rows are equal by length
-  (1..pie.length - 1).each do |index|
+  (1...pie.length).each do |index|
     if pie[index].length != ref_row_length
       return false
     end
@@ -48,8 +48,8 @@ end
 def get_pie_cut(pie, start_row, start_col, width, height)
   cut = ""
 
-  (start_row..start_row + height - 1).each do |i|
-    (start_col..start_col + width - 1).each do |j|
+  (start_row...start_row + height).each do |i|
+    (start_col...start_col + width).each do |j|
       if pie[i] == nil
         return nil;
       end
@@ -82,7 +82,7 @@ def pie_processor(given_pie, res_tmp)
 
   # Cut with different sizes
   # E.g. 1x8, 2x4, 4x2, 8x1
-  (0...$possible_dims.length - 1).each do |dimension_variant|
+  (0...$possible_dims.length).each do |dimension_variant|
 
     # Horizontally first
     cut_width = $possible_dims[-dimension_variant - 1]
@@ -97,9 +97,9 @@ def pie_processor(given_pie, res_tmp)
     res_tmp_clone = Marshal.load(Marshal.dump(res_tmp))
 
     # Traverse each row
-    (0..$real_sizes[:height] - 1).each do |cur_row|
+    (0...$real_sizes[:height]).each do |cur_row|
       # Traverse row from first free point (not marked as "x") to end of width
-      (given_pie_clone[cur_row].count("x")..$real_sizes[:width] - 1).each do |cur_col|
+      (given_pie_clone[cur_row].count("x")...$real_sizes[:width]).each do |cur_col|
         # Try to cut the pie with cut_width * cut_height dims from [cur_row;cur_col]
         processed_pie, cut = get_pie_cut(given_pie_clone, cur_row, cur_col,
                                          cut_width, cut_height)
@@ -141,14 +141,14 @@ end
 #   "..o.....",
 # ]
 
-initial_pie = [
-  ".o.o....",
-  "........",
-  "....o...",
-  "........",
-  ".....o..",
-  "........",
-]
+# initial_pie = [
+#   ".o.o....",
+#   "........",
+#   "....o...",
+#   "........",
+#   ".....o..",
+#   "........",
+# ]
 
 # initial_pie = [
 #   "o....o",
