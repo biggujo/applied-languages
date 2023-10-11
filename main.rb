@@ -1,10 +1,8 @@
 MIN_RAISINS = 2
 MAX_RAISINS = 9
 
-# TODO: Code cleanup
-# TODO: More testing
-
 # Pretty print
+# Pie is an array
 def print_pie(pie)
   pie.each_with_index do |row, index|
     puts "~~~" if index > 0
@@ -12,10 +10,13 @@ def print_pie(pie)
   end
 end
 
-# Check whether a pie has equal rows (columns) or not
+# Check whether a pie is rectangular
+# E.g. 4x3, 8x4
+# Pie is an array
 def is_pie_rectangular(pie)
   ref_row_length = pie[0].length
 
+  # Check if all rows are equal by length
   (1..pie.length - 1).each do |index|
     if pie[index].length != ref_row_length
       return false
@@ -25,12 +26,14 @@ def is_pie_rectangular(pie)
   true
 end
 
+# Finds variants to cut a pie with different sizes
 def get_dividers(given_number)
   (1..given_number).select do |number|
     given_number % number == 0
   end
 end
 
+# Check if some array already exists in other given array
 def is_subarray_in_array(array, subarray)
   array.any? { |item| item == subarray }
 end
@@ -39,6 +42,9 @@ def is_correct_cut(cut)
   cut != nil and cut.count("o") == 1
 end
 
+# Cut the pie from [start_row;start_col] to [width - 1; height - 1]
+# Mark traversed area with "x"
+# Vertical lowering is marked as "\n" to make pretty print easily possible later
 def get_pie_cut(pie, start_row, start_col, width, height)
   cut = ""
 
@@ -66,11 +72,16 @@ def get_pie_cut(pie, start_row, start_col, width, height)
   [pie, cut]
 end
 
-def pie_processor(given_pie, res)
+# A backtracking algorithm recursively cuts the pie
+def pie_processor(given_pie, res_tmp)
+  # If an entire array has been cut (every point is traversed, is equal to "x")
   if given_pie.uniq.size <= 1
+    # Return success
     return true
   end
 
+  # Cut with different sizes
+  # E.g. 1x8, 2x4, 4x2, 8x1
   (0...$possible_dims.length - 1).each do |dimension_variant|
 
     # Horizontally first
@@ -81,16 +92,15 @@ def pie_processor(given_pie, res)
     # cut_width = possible_dims[dimension_variant]
     # cut_height = possible_dims[-dimension_variant - 1]
 
-    if cut_width > $real_sizes[:width] or cut_height > $real_sizes[:height]
-      next
-    end
-
-    # Deep copy
+    # Save arrays with deep copy
     given_pie_clone = Marshal.load(Marshal.dump(given_pie))
-    res_clone = Marshal.load(Marshal.dump(res))
+    res_tmp_clone = Marshal.load(Marshal.dump(res_tmp))
 
+    # Traverse each row
     (0..$real_sizes[:height] - 1).each do |cur_row|
+      # Traverse row from first free point (not marked as "x") to end of width
       (given_pie_clone[cur_row].count("x")..$real_sizes[:width] - 1).each do |cur_col|
+        # Try to cut the pie with cut_width x cut_height dims from [cur_row;cur_col]
         processed_pie, cut = get_pie_cut(given_pie_clone, cur_row, cur_col,
                                          cut_width, cut_height)
 
@@ -98,15 +108,18 @@ def pie_processor(given_pie, res)
           next
         end
 
-        res_clone << cut
+        res_tmp_clone << cut
 
-        processor_result = pie_processor(processed_pie, res_clone)
+        # Go deeper from the current point
+        processor_result = pie_processor(processed_pie, res_tmp_clone)
 
+        # If success and results are proper and unique
         is_new_answer_correct = (processor_result == true and
-          res_clone.length == 4 and
-          !is_subarray_in_array($all_variants, res_clone))
+          res_tmp_clone.length == 4 and
+          !is_subarray_in_array($all_variants, res_tmp_clone))
 
-        $all_variants << res_clone if is_new_answer_correct
+        # Save temporary results to final results
+        $all_variants << res_tmp_clone if is_new_answer_correct
       end
     end
   end
@@ -133,6 +146,7 @@ pie = [
 # Count raisins
 raisins = pie.join("").count("o")
 
+# Initial checks
 unless raisins >= MIN_RAISINS and raisins <= MAX_RAISINS
   raise "There must be between #{MIN_RAISINS} and #{MAX_RAISINS} raisins"
 end
@@ -141,6 +155,7 @@ unless is_pie_rectangular(pie)
   raise "The pie must be rectangular"
 end
 
+# A storage for saving all final cut variants
 $all_variants = []
 
 # Get initial data
@@ -150,13 +165,15 @@ $real_sizes = {
   :area => pie[0].length * pie.length,
 }.freeze
 
+# Compute all possible variants of cuts
+# E.g. 1x8, 2x4, 4x2, 8x1
 $possible_dims = get_dividers($real_sizes[:area] / raisins).freeze
 
 if $possible_dims.empty?
   raise "Invalid pie size: no ways to cut the pie"
 end
 
-# Do backtracking
+# Do main backtracking
 pie_processor(pie, [])
 
 if $all_variants.empty?
@@ -164,7 +181,7 @@ if $all_variants.empty?
   return
 end
 
-# $all_variants.uniq!
+# Mark the result with the widest first cut as the preferred one
 best_result = $all_variants.max_by { |variant| variant[0] }
 
 puts "Solutions:"
@@ -175,7 +192,3 @@ end
 
 puts "Best solution:"
 print_pie best_result
-
-# puts width
-# puts height
-# printf "%s", possible_dimensions
