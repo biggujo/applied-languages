@@ -1,22 +1,15 @@
 MIN_RAISINS = 2
 MAX_RAISINS = 9
 
-# TODO: Pretty print
 # TODO: Code cleanup
 # TODO: More testing
 
 # Pretty print
-def print_pie(pie, indentation)
-  indentation.times { printf " " }
-  puts "["
-
-  pie.each do |row|
-    (indentation * 2).times { printf " " }
+def print_pie(pie)
+  pie.each_with_index do |row, index|
+    puts "~~~" if index > 0
     puts row
   end
-
-  indentation.times { printf " " }
-  puts "]"
 end
 
 # Check whether a pie has equal rows (columns) or not
@@ -36,6 +29,14 @@ def get_dividers(given_number)
   (1..given_number).select do |number|
     given_number % number == 0
   end
+end
+
+def is_subarray_in_array(array, subarray)
+  array.any? { |item| item == subarray }
+end
+
+def is_correct_cut(cut)
+  cut != nil and cut.count("o") == 1
 end
 
 def get_pie_cut(pie, start_row, start_col, width, height)
@@ -65,11 +66,7 @@ def get_pie_cut(pie, start_row, start_col, width, height)
   [pie, cut]
 end
 
-def pie_processor(given_pie, real_sizes, possible_dims, results)
-  if possible_dims.length == 0
-    return false
-  end
-
+def pie_processor(given_pie, real_sizes, possible_dims, res)
   if given_pie.uniq.size <= 1
     return true
   end
@@ -77,39 +74,39 @@ def pie_processor(given_pie, real_sizes, possible_dims, results)
   (0..possible_dims.length - 1).each do |dimension_variant|
 
     # Horizontally first
-    cut_width_dim = possible_dims[-dimension_variant - 1]
-    cut_height_dim = possible_dims[dimension_variant]
+    cut_width = possible_dims[-dimension_variant - 1]
+    cut_height = possible_dims[dimension_variant]
 
-    # Vertically first (optionally)
-    # cut_width_dim = possible_dims[dimension_variant]
-    # cut_height_dim = possible_dims[-dimension_variant - 1]
+    # Vertically first (optional variant)
+    # cut_width = possible_dims[dimension_variant]
+    # cut_height = possible_dims[-dimension_variant - 1]
 
-    if cut_width_dim > real_sizes[:width] or cut_height_dim > real_sizes[:height]
+    if cut_width > real_sizes[:width] or cut_height > real_sizes[:height]
       next
     end
 
     # Deep copy
     given_pie_clone = Marshal.load(Marshal.dump(given_pie))
-    results_clone = Marshal.load(Marshal.dump(results))
+    res_clone = Marshal.load(Marshal.dump(res))
 
     (0..real_sizes[:height] - 1).each do |cur_row|
       (given_pie_clone[cur_row].count("x")..real_sizes[:width] - 1).each do |cur_col|
         processed_pie, cut = get_pie_cut(given_pie_clone, cur_row, cur_col,
-                                         cut_width_dim, cut_height_dim)
+                                         cut_width, cut_height)
 
-        unless cut != nil and cut.count("o") == 1
+        unless is_correct_cut(cut)
           next
         end
 
-        results_clone << cut
+        res_clone << cut
 
-        # puts cut
+        processor_result = pie_processor(processed_pie, real_sizes, possible_dims, res_clone)
 
-        processor_result = pie_processor(processed_pie, real_sizes, possible_dims, results_clone)
+        is_new_answer_correct = (processor_result == true and
+          res_clone.length == 4 and
+          !is_subarray_in_array($all_variants, res_clone))
 
-        if processor_result == true
-          $all_variants << results_clone if results_clone.length == 4
-        end
+        $all_variants << res_clone if is_new_answer_correct
       end
     end
   end
@@ -151,20 +148,27 @@ width = pie[0].length
 height = pie.length
 possible_dimensions = get_dividers(width * height / raisins)
 
+if possible_dimensions.length == 0
+  raise "Invalid pie size: no ways to cut the pie"
+end
+
 # Do backtracking
 pie_processor(pie, {
   :width => width,
   :height => height
 }, possible_dimensions, [])
 
-$all_variants.uniq!
+# $all_variants.uniq!
 best_result = $all_variants.max_by { |variant| variant[0] }
 
-puts "All solutions"
-print_pie($all_variants, 2)
+puts "Solutions:"
+$all_variants.each_with_index do |variant, index|
+  puts "Variant #{index + 1}:"
+  print_pie variant
+end
 
-puts "Result"
-printf "%s", best_result
+puts "Best solution:"
+print_pie best_result
 
 # puts width
 # puts height
