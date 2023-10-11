@@ -10,3 +10,13 @@ written as 2000=MM, 8=VIII; or MMVIII. 1666 uses each Roman character in descend
 
 Input range: 1 <= n < 4000
 4 should be represented as IV.
+
+### Solution
+
+```
+1234 <=> MCCXXXIV
+1666 <=> MDCLXVI
+1990 <=> MCMXC
+2008 <=> MMVIII
+3888 <=> MMMDCCCLXXXVIII
+```
