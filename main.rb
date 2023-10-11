@@ -100,7 +100,7 @@ def pie_processor(given_pie, res_tmp)
     (0..$real_sizes[:height] - 1).each do |cur_row|
       # Traverse row from first free point (not marked as "x") to end of width
       (given_pie_clone[cur_row].count("x")..$real_sizes[:width] - 1).each do |cur_col|
-        # Try to cut the pie with cut_width x cut_height dims from [cur_row;cur_col]
+        # Try to cut the pie with cut_width * cut_height dims from [cur_row;cur_col]
         processed_pie, cut = get_pie_cut(given_pie_clone, cur_row, cur_col,
                                          cut_width, cut_height)
 
@@ -113,9 +113,9 @@ def pie_processor(given_pie, res_tmp)
         # Go deeper from the current point
         processor_result = pie_processor(processed_pie, res_tmp_clone)
 
-        # If success and results are proper and unique
+        # If success and the result is proper and unique
         is_new_answer_correct = (processor_result == true and
-          res_tmp_clone.length == 4 and
+          res_tmp_clone.length == $raisins_amount and
           !is_subarray_in_array($all_variants, res_tmp_clone))
 
         # Save temporary results to final results
@@ -127,31 +127,57 @@ end
 
 # Variants of pie
 
-pie = [
-  ".o......",
-  "......o.",
-  "....o...",
-  "..o.....",
-]
-
-# pie = [
-#   ".o.o....",
+# initial_pie = [
 #   "........",
-#   "....o...",
-#   "........",
-#   ".....o..",
+#   "..o.....",
+#   "...o....",
 #   "........",
 # ]
 
+# initial_pie = [
+#   ".o......",
+#   "......o.",
+#   "....o...",
+#   "..o.....",
+# ]
+
+initial_pie = [
+  ".o.o....",
+  "........",
+  "....o...",
+  "........",
+  ".....o..",
+  "........",
+]
+
+# initial_pie = [
+#   "o....o",
+#   "......",
+#   "......",
+#   "......",
+#   "......",
+#   "o....o",
+# ]
+
+# A "No solutions" variant
+# initial_pie = [
+#   "......",
+#   "..oo..",
+#   ".o..o.",
+#   ".o..o.",
+#   "..oo..",
+#   "......",
+# ]
+
 # Count raisins
-raisins = pie.join("").count("o")
+$raisins_amount = initial_pie.join("").count("o").freeze
 
 # Initial checks
-unless raisins >= MIN_RAISINS and raisins <= MAX_RAISINS
+unless $raisins_amount >= MIN_RAISINS and $raisins_amount <= MAX_RAISINS
   raise "There must be between #{MIN_RAISINS} and #{MAX_RAISINS} raisins"
 end
 
-unless is_pie_rectangular(pie)
+unless is_pie_rectangular(initial_pie)
   raise "The pie must be rectangular"
 end
 
@@ -160,21 +186,21 @@ $all_variants = []
 
 # Get initial data
 $real_sizes = {
-  :width => pie[0].length,
-  :height => pie.length,
-  :area => pie[0].length * pie.length,
+  :width => initial_pie[0].length,
+  :height => initial_pie.length,
+  :area => initial_pie[0].length * initial_pie.length,
 }.freeze
 
 # Compute all possible variants of cuts
 # E.g. 1x8, 2x4, 4x2, 8x1
-$possible_dims = get_dividers($real_sizes[:area] / raisins).freeze
+$possible_dims = get_dividers($real_sizes[:area] / $raisins_amount).freeze
 
 if $possible_dims.empty?
   raise "Invalid pie size: no ways to cut the pie"
 end
 
 # Do main backtracking
-pie_processor(pie, [])
+pie_processor(initial_pie, [])
 
 if $all_variants.empty?
   puts "No solutions"
@@ -184,11 +210,14 @@ end
 # Mark the result with the widest first cut as the preferred one
 best_result = $all_variants.max_by { |variant| variant[0] }
 
+puts "Initial pie (#{$real_sizes[:width]} x #{$real_sizes[:height]}):"
+print_pie(initial_pie)
+
 puts "Solutions:"
 $all_variants.each_with_index do |variant, index|
   puts "Variant #{index + 1}:"
   print_pie variant
 end
 
-puts "Best solution:"
+puts "Best solution (widest first cut):"
 print_pie best_result
