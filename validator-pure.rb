@@ -3,8 +3,9 @@ def is_ipv4_valid(ip)
 
   return false if ip_numbers.length != 4
 
-  ip_numbers.each do |number|
-    return false unless number.to_i.between?(0, 255)
+  ip_numbers.each do |number_str|
+    return false unless number_str.to_i.between?(0, 255)
+    return false if number_str != number_str.to_i.to_s
   end
 
   true
