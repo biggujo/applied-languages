@@ -9,7 +9,7 @@ roman_values = {
 }
 
 unless ARGV.length == 1
-  puts "You need to provide with exactly one argument"
+  raise "You need to provide with exactly one argument"
 end
 
 # Input
