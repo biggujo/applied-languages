@@ -15,6 +15,8 @@ def parse_hospitals(output_file_name)
   end
 
   CSV.open(output_file_name, "w") do |csv|
+    csv << ["id", "hospital_name"]
+
     hospital_names.each_with_index do |link, index|
       csv << [index + 1, link]
     end

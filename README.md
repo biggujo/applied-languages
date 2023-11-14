@@ -1,5 +1,8 @@
-# Repository info
+# 07-parser
 
-This repository contains homeworks on Applied Programming university course.
+Parse hospital names from https://www.hospitalsafetygrade.org/all-hospitals
+to a CSV file with the following format:
 
-Each branch has the task in README.md and the solution.
+```
+id, hospital_name
+```
