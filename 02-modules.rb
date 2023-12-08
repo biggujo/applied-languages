@@ -6,7 +6,7 @@ module CreaturesModule
     end
 
     puts "#{@name} dies"
-    @is_alive = true
+    @is_alive = false
   end
 
   def get_happy
