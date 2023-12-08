@@ -1,8 +1,8 @@
 # Repository info
 
-This repository contains homeworks on Applied Programming university course.
+This repository contains homework assignments from the Applied Programming university course.
 
-Each branch has the task in README.md and the solution.
+Each branch includes the task in README.md along with its corresponding solution.
 
 List of branches:
 - [Rock Paper Scissors](https://github.com/biggujo/applied-languages/tree/01-rock-paper-scissors).
