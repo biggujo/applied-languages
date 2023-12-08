@@ -69,7 +69,6 @@ class MacGUIFactory < AbstractGUIFactory
 end
 
 # 5. Usage
-
 if ARGV.length == 0
   puts "Possible arguments:"
   puts "\tmac - run in macOS mode"
